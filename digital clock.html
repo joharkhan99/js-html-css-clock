@@ -1,0 +1,194 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.10.2/jquery.min.js"></script>
+    <title>Digital Clock</title>
+</head>
+<style>
+    body {
+        background-color: black;
+    }
+
+    .clo {
+        position: absolute;
+        color: red;
+        font-size: 65px;
+        font-family: monospace;
+        top: 10%;
+        left: 50%;
+        transform: translateX(-50%) translateY(-10%);
+        letter-spacing: 5px;
+    }
+
+    .outer_face {
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        position: absolute;
+        width: 200px;
+        height: 200px;
+        border-radius: 200px;
+        background: black;
+        box-shadow: 0px 0px 50px -30px red;
+    }
+
+    .outer_face::before,
+    .outer_face::after,
+    .outer_face .marker {
+        content: "";
+        position: absolute;
+        width: 8px;
+        height: 100%;
+        background: rgb(255, 0, 0);
+        z-index: 0;
+        left: 50%;
+        margin-left: -4px;
+        top: 0
+    }
+
+    .outer_face::after {
+        transform: rotate(90deg)
+    }
+
+    .outer_face .marker {
+        background: rgb(107, 59, 59);
+        width: 3px;
+        margin-left: -3px
+    }
+
+    .outer_face .marker.oneseven {
+        transform: rotate(30deg)
+    }
+
+    .outer_face .marker.twoeight {
+        transform: rotate(60deg)
+    }
+
+    .outer_face .marker.fourten {
+        transform: rotate(120deg)
+    }
+
+    .outer_face .marker.fiveeleven {
+        transform: rotate(150deg)
+    }
+
+    .inner_face {
+        position: relative;
+        width: 88%;
+        height: 88%;
+        background: black;
+        border: 1px solid rgb(34, 10, 10);
+        border-radius: 1000px;
+        z-index: 1000;
+        left: 6%;
+        top: 6%
+    }
+
+    .inner_face::before {
+        content: "";
+        width: 18px;
+        height: 18px;
+        border-radius: 18px;
+        margin-left: -9px;
+        margin-top: -9px;
+        background: red;
+        position: absolute;
+        top: 50%;
+        left: 50%;
+    }
+
+    .hand,
+    .hand.hour {
+        position: absolute;
+        width: 4px;
+        height: 30%;
+        top: 20%;
+        left: 50%;
+        margin-left: -2px;
+        background: black;
+        transform: rotate(0deg);
+        transform-origin: bottom;
+        z-index: -1;
+        box-shadow: 0 0 3px gray;
+    }
+
+    .hand.minute {
+        height: 45%;
+        top: 5%;
+        width: 5px;
+        margin-left: -2.5px;
+    }
+
+    .hand.second {
+        height: 50%;
+        width: 2px;
+        margin-left: -1px;
+        top: 0;
+        background: red;
+        box-shadow: 0 0 3px rgb(231, 11, 11);
+
+    }
+
+    .inner_face::after {
+        content: "JKA";
+        position: absolute;
+        font-weight: bolder;
+        letter-spacing: 2px;
+        font-family: Arial, Helvetica, sans-serif;
+        width: 100%;
+        z-index: -1000;
+        color: red;
+        text-align: center;
+        top: 85%
+    }
+</style>
+
+<body>
+    <div class="clo" onload="showTime()"></div>
+    <script>
+        function showTime() {
+            setTimeout(showTime, 1000);
+            var date = new Date(), hour = date.getHours(), mins = date.getMinutes(), secs = date.getSeconds(), session = "AM";
+            hour = (hour == 0) ? hour = 12 : hour; hour = (hour < 10) ? "0" + hour : hour; mins = (mins < 10) ? "0" + mins : mins; secs = (secs < 10) ? "0" + secs : secs;
+            if (hour > 12) { hour -= 12; session = "PM"; }
+            let time = hour + ":" + mins + ":" + secs + ":" + session;
+            $(".clo").html(time);
+        };
+        showTime();
+    </script>
+
+    <div id="liveclock" class="outer_face">
+
+        <div class="marker oneseven"></div>
+        <div class="marker twoeight"></div>
+        <div class="marker fourten"></div>
+        <div class="marker fiveeleven"></div>
+
+        <div class="inner_face">
+            <div class="hand hour"></div>
+            <div class="hand minute"></div>
+            <div class="hand second"></div>
+        </div>
+
+    </div>
+
+
+    <script>
+        function updateclock() {
+            var curr = new Date();
+            var hoursDeg = (curr.getHours() + curr.getMinutes() / 60) / 12 * 360;
+            var minDeg = curr.getMinutes() / 60 * 360;
+            var secDeg = (curr.getSeconds() + curr.getMilliseconds() / 1000) / 60 * 360;
+            $('.hour').css({ transform: 'rotate(' + hoursDeg + 'deg)' });
+            $('.minute').css({ transform: 'rotate(' + minDeg + 'deg)' });
+            $('.second').css({ transform: 'rotate(' + secDeg + 'deg)' });
+            requestAnimationFrame(updateclock);
+        }
+        requestAnimationFrame(updateclock);
+    </script>
+</body>
+
+</html>
